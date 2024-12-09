@@ -1,0 +1,34 @@
+# .NET
+API/bin/
+API/obj/
+API/.vs/
+API/*.user
+API/*.userosscache
+API/*.sln.docstates
+API/*.dll
+API/*.exe
+API/*.pdb
+
+# Angular
+client/.angular/
+client/dist/
+client/node_modules/
+client/e2e/*.js
+client/e2e/*.map
+client/.env
+client/npm-debug.log
+client/yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/
+
+# OS specific
+.DS_Store
+Thumbs.db
