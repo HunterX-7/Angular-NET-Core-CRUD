@@ -16,9 +16,21 @@ public class UserService : IUserService
         _authService = authService;
     }
 
-    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+    public async Task<IEnumerable<UserDto>> GetAllUsersAsync(string searchTerm = null)
     {
-        var users = await _context.Users.ToListAsync();
+        var query = _context.Users.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.ToLower();
+            query = query.Where(u => 
+                u.FirstName.ToLower().Contains(searchTerm) ||
+                u.LastName.ToLower().Contains(searchTerm) ||
+                u.Email.ToLower().Contains(searchTerm)
+            );
+        }
+
+        var users = await query.ToListAsync();
         return users.Select(u => new UserDto
         {
             Id = u.Id,
