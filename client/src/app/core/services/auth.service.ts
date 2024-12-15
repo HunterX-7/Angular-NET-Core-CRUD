@@ -2,14 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { LoginRequest, LoginResponse, AuthState, ErrorResponse } from '../models/auth.models';
-import { User } from '../models/user.model';
+import { LoginRequest } from '../models/login-request.interface';
+import { LoginResponse } from '../models/login-response.interface';
+import { User } from '../models/user.interface';
+import { AuthState } from '../models/auth-state.interface';
+import { ApiError } from '../models/api-error.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:5000/api';
+  private readonly API_URL = `${environment.apiUrl}`;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
 
@@ -30,12 +34,17 @@ export class AuthService {
     const storedUser = localStorage.getItem(this.USER_KEY);
     
     if (token && storedUser) {
-      const user = JSON.parse(storedUser) as User;
-      this.authStateSubject.next({
-        isAuthenticated: true,
-        user,
-        token
-      });
+      try {
+        const user = JSON.parse(storedUser) as User;
+        this.authStateSubject.next({
+          isAuthenticated: true,
+          user,
+          token
+        });
+      } catch (error) {
+        // for invalid stored data, clear it
+        this.logout();
+      }
     }
   }
 
@@ -49,7 +58,7 @@ export class AuthService {
             lastName: response.lastName,
             email: response.email,
             role: response.role as 'Admin' | 'User',
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString() // Updated when fetching profile
           };
 
           localStorage.setItem(this.TOKEN_KEY, response.token);
@@ -66,12 +75,14 @@ export class AuthService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An error occurred';
+    let errorMessage: string;
     
     if (error.error instanceof ErrorEvent) {
       errorMessage = error.error.message;
+    } else if (error.status === 401) {
+      errorMessage = 'Invalid email or password';
     } else {
-      errorMessage = (error.error as ErrorResponse)?.message || 'Server error';
+      errorMessage = (error.error as ApiError)?.message || `Server error: ${error.status}`;
     }
     
     return throwError(() => new Error(errorMessage));

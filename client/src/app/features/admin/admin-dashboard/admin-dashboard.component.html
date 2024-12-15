@@ -1,39 +1,54 @@
 <div class="admin-container">
-    <div class="admin-panel">
-      <header class="admin-header">
-        <h2>Admin Dashboard</h2>
-        <button class="add-user-btn">Add New User</button>
-      </header>
-  
-      <div class="search-bar">
-        <input type="text" placeholder="Search users..." class="search-input">
-      </div>
-  
-      <div class="users-table-container">
-        <table class="users-table" *ngIf="!isLoading && !error">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td>{{user.firstName}} {{user.lastName}}</td>
-              <td>{{user.email}}</td>
-              <td>{{user.role}}</td>
-              <td class="actions">
-                <button (click)="onEditUser(user.id)" class="action-btn edit">Edit</button>
-                <button (click)="onDeleteUser(user.id)" class="action-btn delete">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-  
-        <div *ngIf="isLoading" class="loading">Loading users...</div>
-        <div *ngIf="error" class="error-message">{{error}}</div>
+  <div class="admin-panel">
+    <header class="admin-header">
+      <h2>Admin Dashboard</h2>
+      <button class="add-user-btn">Add New User</button>
+    </header>
+
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Search users..." 
+        class="search-input"
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearch($event)">
+    </div>
+
+    <div class="users-table-container">
+      <table class="users-table" *ngIf="!isLoading && !error && users.length > 0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{user.firstName}} {{user.lastName}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.role}}</td>
+            <td class="actions">
+              <button (click)="onEditUser(user)" class="action-btn edit">Edit</button>
+              <button (click)="onDeleteUser(user.id)" class="action-btn delete">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="isLoading" class="loading">Loading users...</div>
+      <div *ngIf="error" class="error-message">{{error}}</div>
+      <div *ngIf="!isLoading && !error && users.length === 0" class="no-data">
+        No users found
       </div>
     </div>
+    <app-edit-user-modal
+      *ngIf="showEditModal && selectedUser"
+      [user]="selectedUser"
+      [isAdmin]="true"
+      (save)="onSaveEdit($event)"
+      (cancel)="onCancelEdit()">
+    </app-edit-user-modal>
   </div>
+</div>

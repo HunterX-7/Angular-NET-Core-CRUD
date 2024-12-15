@@ -1,0 +1,75 @@
+<div class="modal-overlay">
+    <div class="modal-content">
+      <h2>Edit {{ isAdmin ? 'User' : 'Profile' }}</h2>
+      
+      <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            class="form-control"
+            [class.is-invalid]="editForm.get('firstName')?.invalid && editForm.get('firstName')?.touched">
+          <div class="invalid-feedback" *ngIf="editForm.get('firstName')?.invalid && editForm.get('firstName')?.touched">
+            First name is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            class="form-control"
+            [class.is-invalid]="editForm.get('lastName')?.invalid && editForm.get('lastName')?.touched">
+          <div class="invalid-feedback" *ngIf="editForm.get('lastName')?.invalid && editForm.get('lastName')?.touched">
+            Last name is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control"
+            [class.is-invalid]="editForm.get('email')?.invalid && editForm.get('email')?.touched">
+          <div class="invalid-feedback" *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched">
+            Please enter a valid email
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="password">Password (leave blank to keep current)</label>
+          <input 
+            id="password"
+            type="password"
+            formControlName="password"
+            class="form-control">
+        </div>
+  
+        <div class="form-group" *ngIf="isAdmin">
+          <label for="role">Role</label>
+          <select 
+            id="role"
+            formControlName="role"
+            class="form-control">
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+  
+        <div class="error-message" *ngIf="error">{{ error }}</div>
+  
+        <div class="button-group">
+          <button type="submit" [disabled]="editForm.invalid || isLoading" class="btn-save">
+            {{ isLoading ? 'Saving...' : 'Save Changes' }}
+          </button>
+          <button type="button" (click)="onCancel()" class="btn-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
