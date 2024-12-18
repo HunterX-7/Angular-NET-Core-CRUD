@@ -80,6 +80,13 @@ The key features of the project include:
     ng serve
 3. The frontend will be available at `http://localhost:4200`.
 
+### Testing Credentials
+For testing purposes, you can use the following admin credentials:
+- Email: admin@example.com
+- Password: admin123
+
+> **Note**: These are default testing credentials. For production environments, ensure these are changed and proper security measures are implemented.
+
 ## Features
 - JWT-based authentication with role-based authorization
 - Admin users can perform CRUD operations on all users
